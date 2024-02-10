@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pokedesk/app/module/home/home_page.dart';
@@ -12,11 +14,14 @@ class ChecagemPage extends StatefulWidget {
 
 class _ChecagemPageState extends State<ChecagemPage> {
 
+
+  StreamSubscription? streamSubscription;
+
   @override
   void initState() {
     super.initState();
 
-    FirebaseAuth.instance
+   streamSubscription = FirebaseAuth.instance
         .authStateChanges()
         .listen((User? user) {
       if (user == null) {
@@ -33,6 +38,12 @@ class _ChecagemPageState extends State<ChecagemPage> {
         );
       }
     });
+  }
+
+  @override
+  void dispose(){
+    streamSubscription!.cancel();
+    super.dispose();
   }
 
   @override

@@ -9,6 +9,7 @@ class AppWidget extends StatelessWidget {
     return MaterialApp(
       title: 'Pokedesk',
       theme: ThemeData(
+        useMaterial3: true,
 
         primarySwatch: Colors.blue,
       ),
