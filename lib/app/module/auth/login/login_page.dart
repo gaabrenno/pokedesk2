@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../home/home_page.dart';
+import '../cadastro/cadastro_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -18,7 +19,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login Page'),),
+        title: Text('Login Page'),
+      ),
       body: ListView(
         padding: EdgeInsets.all(12),
         children: [
@@ -40,6 +42,16 @@ class _LoginPageState extends State<LoginPage> {
             },
             child: Text('Entrar'),
           ),
+          TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CadastroPage(),
+                  ),
+                );
+              },
+              child: Text('Cadastrar'))
         ],
       ),
     );

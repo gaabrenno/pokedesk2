@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pokedesk/app/module/home/home_page.dart';
@@ -13,7 +12,6 @@ class ChecagemPage extends StatefulWidget {
 }
 
 class _ChecagemPageState extends State<ChecagemPage> {
-
 
   StreamSubscription? streamSubscription;
 
