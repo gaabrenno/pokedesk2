@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pokedesk/app/module/auth/checagem/checagem_page.dart';
 
 class CadastroPage extends StatefulWidget {
   const CadastroPage({Key? key}) : super(key: key);
@@ -35,9 +36,48 @@ class _CadastroPageState extends State<CadastroPage> {
             controller: _passwordController,
             decoration: InputDecoration(label: Text('PassWord')),
           ),
-          ElevatedButton(onPressed: (){}, child: Text('Cadastrar'))
+          ElevatedButton(
+              onPressed: () {
+                cadastrar();
+              },
+              child: Text('Cadastrar'))
         ],
       ),
     );
+  }
+
+  cadastrar() async {
+    try {
+      UserCredential userCredential =
+          await _firebaseAuth.createUserWithEmailAndPassword(
+              email: _emailController.text, password: _passwordController.text);
+      if (userCredential != null) {
+        userCredential.user!.updateDisplayName(_nameController.text);
+        Navigator.pushAndRemoveUntil(
+            context as BuildContext,
+            MaterialPageRoute(
+              builder: (context) => ChecagemPage(),
+            ),
+            (route) => false);
+      }
+    } on FirebaseAuthException catch (e) {
+      if(e.code == 'weak-password'){
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Senha Fraca!'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+
+      }else if(e.code== 'email-already-in-use'){
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('E-mail já cadastrado!'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+
+    }
   }
 }
