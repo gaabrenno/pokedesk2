@@ -17,8 +17,12 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.amberAccent,
       //o Scaffold traz todos os recursos necessarios para dar a aparencia do app, appBar, body, icons, funções...
       appBar: AppBar(
+        backgroundColor: Colors.amberAccent,
+        elevation: 0,
+        toolbarHeight: 70,
         actions: [
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -33,30 +37,73 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ],
-        title: const Text('Pokemon'),
+        title: const Center(
+            child: Text(
+          'My Pokemon',
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold, color: Colors.white
+          ),
+        )),
       ),
-      body: FutureBuilder<dynamic>(
-        future: pegarPokemon(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data!['results'].length,
-              itemBuilder: (context, index) {
-                var pokemon = snapshot.data!['results'][index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    child: Text(pokemon['name'].toString()),
-                  ),
-                  title: Text(pokemon['name']),
-                  subtitle: Text(pokemon['url']),
-                );
-              },
-            );
-          } else if (snapshot.hasError) {
-            return Center(child: Text('${snapshot.error}'));
-          }
-          return const Center(child: CircularProgressIndicator());
-        },
+      body: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: FutureBuilder<dynamic>(
+          future: pegarPokemon(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                itemCount: snapshot.data!['results'].length,
+                itemBuilder: (context, index) {
+                  var pokemon = snapshot.data!['results'][index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.amberAccent,
+                          child: Text(
+                            pokemon['name'][0].toUpperCase(),
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        title: Text(
+                          pokemon['name'],
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Text(
+                          pokemon['url'],
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            } else if (snapshot.hasError) {
+              return Center(child: Text('${snapshot.error}'));
+            }
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
       ),
     );
   }

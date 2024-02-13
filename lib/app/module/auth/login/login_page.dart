@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../home/home_page.dart';
 import '../cadastro/cadastro_page.dart';
+
 // 22
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -21,15 +22,20 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login Page'),
+        title: Text(
+          'Pokedex',
+          style: Theme.of(context).textTheme.headlineLarge,
+        ),
       ),
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: EdgeInsets.all(12),
+          padding: EdgeInsets.all(16),
           children: [
             Text(
-                'Faça login e confira quais Pokemons estão disponiveis para você!'),
+              'Faça login e confira quais Pokemons estão disponiveis para você!',
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
@@ -50,7 +56,14 @@ class _LoginPageState extends State<LoginPage> {
               decoration: InputDecoration(
                 label: Text('PassWord'),
                 suffixIcon: IconButton(
-                    onPressed: () {}, icon: Icon(Icons.visibility_outlined)),
+                    onPressed: () {
+                      setState(() {
+                        _seePassword = !_seePassword;
+                      });
+                    },
+                    icon: Icon(_seePassword
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined)),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
