@@ -13,9 +13,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _firebaseAuth = FirebaseAuth.instance;
+  String user = '';
+  String email = '';
+
+  @override
+  void initState() {
+    getUser();
+  }
 
   @override
   Widget build(BuildContext context) {
+    getUser();
     return Scaffold(
       backgroundColor: Colors.amberAccent,
       //o Scaffold traz todos os recursos necessarios para dar a aparencia do app, appBar, body, icons, funções...
@@ -30,9 +38,54 @@ class _HomePageState extends State<HomePage> {
             children: [
               TextButton(
                 onPressed: () {
-                  sair();
+                  showMenu(
+                    context: context,
+                    position: RelativeRect.fromLTRB(0, kToolbarHeight, 0, 0),
+                    items: [
+                      PopupMenuItem(
+                        child: ListTile(
+                          leading: Icon(Icons.account_circle),
+                          title: Text(
+                            user,
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          subtitle: Text(
+                            email,
+                          ),
+                        ),
+                      ),
+                      PopupMenuItem(
+                        child: ListTile(
+                          title: Text('Sair'),
+                          leading: Icon(Icons.exit_to_app),
+                          onTap: () {
+                            sair();
+                          },
+                        ),
+                      ),
+                    ],
+                  );
                 },
-                child: Text('Logout'),
+                child: Row(
+                  children: [
+                    // Ícone do usuário
+                    // Espaçamento entre o ícone e o texto
+                    Text(
+                      user,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(width: 5),
+                    Icon(
+                      Icons.account_circle,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -41,9 +94,7 @@ class _HomePageState extends State<HomePage> {
             child: Text(
           'My Pokemon',
           style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold, color: Colors.white
-          ),
+              fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
         )),
       ),
       body: Container(
@@ -106,6 +157,17 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  getUser() async {
+    User? usuario = await _firebaseAuth.currentUser;
+    if (usuario != null) {
+      setState(
+        () {
+          user = usuario.displayName!;
+        },
+      );
+    }
   }
 
   sair() async {
