@@ -18,153 +18,149 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    super.initState();
     getUser();
   }
 
   @override
   Widget build(BuildContext context) {
-    getUser();
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
     return Scaffold(
-      backgroundColor: Colors.amberAccent,
-      //o Scaffold traz todos os recursos necessarios para dar a aparencia do app, appBar, body, icons, funções...
+      key: _scaffoldKey,
+      // Define a chave global para o Scaffold
       appBar: AppBar(
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              _scaffoldKey.currentState
+                  ?.openEndDrawer(); // Abre o endDrawer usando a chave global
+            },
+            icon: const Icon(
+              Icons.account_circle,
+              color: Colors.white,
+            ),
+          ),
+        ],
         backgroundColor: Colors.amberAccent,
         elevation: 0,
         toolbarHeight: 70,
-        actions: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              TextButton(
-                onPressed: () {
-                  showMenu(
-                    context: context,
-                    position: RelativeRect.fromLTRB(0, kToolbarHeight, 0, 0),
-                    items: [
-                      PopupMenuItem(
-                        child: ListTile(
-                          leading: Icon(Icons.account_circle),
-                          title: Text(
-                            user,
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
-                          ),
-                          subtitle: Text(
-                            email,
-                          ),
-                        ),
-                      ),
-                      PopupMenuItem(
-                        child: ListTile(
-                          title: Text('Sair'),
-                          leading: Icon(Icons.exit_to_app),
-                          onTap: () {
-                            sair();
-                          },
-                        ),
-                      ),
-                    ],
-                  );
-                },
-                child: Row(
-                  children: [
-                    // Ícone do usuário
-                    // Espaçamento entre o ícone e o texto
-                    Text(
-                      user,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(width: 5),
-                    Icon(
-                      Icons.account_circle,
-                      color: Colors.white,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
         title: const Center(
-            child: Text(
-          'My Pokemon',
-          style: TextStyle(
-              fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
-        )),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
+          child: Text(
+            'My Pokemon',
+            style: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
         ),
+      ),
+      backgroundColor: Colors.amberAccent,
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: Text(user),
+              accountEmail: Text(email),
+            ),
+            ListTile(
+              dense: true,
+              title: Text('Logout'),
+              trailing: Icon(Icons.exit_to_app),
+              onTap: () {
+                sair();
+              },
+            ),
+          ],
+        ),
+      ),
+      //o Scaffold traz todos os recursos necessarios para dar a aparencia do app, appBar, body, icons, funções...
+
+      body: Container(
+        decoration: BoxDecoration(color: Colors.white,
+        borderRadius: BorderRadius.circular(15),),
+
+      // Define o fundo do body como branco
         child: FutureBuilder<dynamic>(
           future: pegarPokemon(),
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('${snapshot.error}'));
+            } else {
+              List<dynamic> pokemonList = snapshot.data!['results'];
               return ListView.builder(
-                itemCount: snapshot.data!['results'].length,
+                itemCount: (pokemonList.length / 2).ceil(),
                 itemBuilder: (context, index) {
-                  var pokemon = snapshot.data!['results'][index];
+                  int startIndex = index * 2;
+                  int endIndex = startIndex + 2;
+                  if (endIndex > pokemonList.length) {
+                    endIndex = pokemonList.length;
+                  }
+                  List<dynamic> pokemonPair =
+                  pokemonList.sublist(startIndex, endIndex);
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: Offset(0, 3), // changes position of shadow
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: pokemonPair.map((pokemon) {
+                        return Expanded(
+                          child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: 4.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: Offset(
+                                      0, 3), // changes position of shadow
+                                ),
+                              ],
+                            ),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.amberAccent,
+                                child: Text(
+                                  pokemon['name'][0].toUpperCase(),
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                              title: Text(
+                                pokemon['name'],
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.amberAccent,
-                          child: Text(
-                            pokemon['name'][0].toUpperCase(),
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        title: Text(
-                          pokemon['name'],
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: Text(
-                          pokemon['url'],
-                          style: TextStyle(fontSize: 12),
-                        ),
-                      ),
+                        );
+                      }).toList(),
                     ),
                   );
                 },
               );
-            } else if (snapshot.hasError) {
-              return Center(child: Text('${snapshot.error}'));
             }
-            return const Center(child: CircularProgressIndicator());
           },
         ),
       ),
     );
   }
 
-  getUser() async {
+
+getUser() async {
     User? usuario = await _firebaseAuth.currentUser;
     if (usuario != null) {
       setState(
         () {
           user = usuario.displayName!;
+          email = usuario.displayName!;
         },
       );
     }
