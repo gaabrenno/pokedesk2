@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:pokedesk/_colors.dart';
 import 'package:pokedesk/app/module/auth/checagem/checagem_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,39 +25,47 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
-      key: _scaffoldKey,
+      key: scaffoldKey,
       // Define a chave global para o Scaffold
       appBar: AppBar(
         actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              _scaffoldKey.currentState
-                  ?.openEndDrawer(); // Abre o endDrawer usando a chave global
+          GestureDetector(
+            onTap: () {
+              scaffoldKey.currentState?.openEndDrawer();
             },
-            icon: const Icon(
-              Icons.account_circle,
-              color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Image.asset(
+                "assets/boll.png",
+                height: 30,
+              ),
             ),
           ),
         ],
-        backgroundColor: Colors.amberAccent,
-        elevation: 0,
-        toolbarHeight: 70,
-        title: const Center(
-          child: Text(
-            'My Pokemon',
-            style: TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          padding: EdgeInsets.only(top: 20.0),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [MinhasCores.amareloEscuro, MinhasCores.amareloClaro],
+              begin: Alignment.topRight,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: Center(
+            child: Image.asset(
+              "assets/logo.png",
+              height: 70,
             ),
           ),
         ),
+        elevation: 0,
+        toolbarHeight: 70,
       ),
-      backgroundColor: Colors.amberAccent,
+      backgroundColor: MinhasCores.amareloClaro,
       endDrawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -76,13 +85,12 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      //o Scaffold traz todos os recursos necessarios para dar a aparencia do app, appBar, body, icons, funções...
 
       body: Container(
-        decoration: BoxDecoration(color: Colors.white,
-        borderRadius: BorderRadius.circular(15),),
-
-      // Define o fundo do body como branco
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+        ),
         child: FutureBuilder<dynamic>(
           future: pegarPokemon(),
           builder: (context, snapshot) {
@@ -101,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                     endIndex = pokemonList.length;
                   }
                   List<dynamic> pokemonPair =
-                  pokemonList.sublist(startIndex, endIndex);
+                      pokemonList.sublist(startIndex, endIndex);
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -109,7 +117,7 @@ class _HomePageState extends State<HomePage> {
                       children: pokemonPair.map((pokemon) {
                         return Expanded(
                           child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 4.0),
+                            margin: const EdgeInsets.symmetric(horizontal: 4.0),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
@@ -118,23 +126,25 @@ class _HomePageState extends State<HomePage> {
                                   color: Colors.grey.withOpacity(0.5),
                                   spreadRadius: 2,
                                   blurRadius: 5,
-                                  offset: Offset(
+                                  offset: const Offset(
                                       0, 3), // changes position of shadow
                                 ),
                               ],
                             ),
                             child: ListTile(
                               leading: CircleAvatar(
-                                backgroundColor: Colors.amberAccent,
+                                backgroundColor: MinhasCores.amareloLogo,
                                 child: Text(
                                   pokemon['name'][0].toUpperCase(),
-                                  style: TextStyle(color: Colors.white),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                               title: Text(
                                 pokemon['name'],
-                                style: TextStyle(
-                                  fontSize: 16,
+                                style: const TextStyle(
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -153,8 +163,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-
-getUser() async {
+  getUser() async {
     User? usuario = await _firebaseAuth.currentUser;
     if (usuario != null) {
       setState(
