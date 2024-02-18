@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
         ],
         backgroundColor: Colors.transparent,
         flexibleSpace: Container(
-          padding: EdgeInsets.only(top: 20.0),
+          padding: EdgeInsets.only(top: 30.0),
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [MinhasCores.amareloEscuro, MinhasCores.amareloClaro],

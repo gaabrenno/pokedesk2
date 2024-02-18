@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedesk/app/module/auth/checagem/checagem_page.dart';
 
+import '../../../../_colors.dart';
+
 class CadastroPage extends StatefulWidget {
   const CadastroPage({Key? key}) : super(key: key);
 
@@ -19,28 +21,50 @@ class _CadastroPageState extends State<CadastroPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cadastro Page'),
+        backgroundColor: const Color(0xFF6D6DF7),
+        elevation: 0,
+        toolbarHeight: 200,
+        flexibleSpace: Container(
+          padding: EdgeInsets.only(top: 30.0),
+          child: Center(
+            child: Image.asset(
+              "assets/logo.png",
+              height: 150,
+            ),
+          ),
+        ),
       ),
-      body: ListView(
-        padding: EdgeInsets.all(12),
+      body: Stack(
         children: [
-          TextFormField(
-            controller: _nameController,
-            decoration: InputDecoration(label: Text('Nome Completo')),
+      Container(
+      decoration: const BoxDecoration(
+      gradient: LinearGradient(
+      begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [MinhasCores.azulEscuro, MinhasCores.azulClaro])),
+    ),
+          ListView(
+            padding: EdgeInsets.all(12),
+            children: [
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(label: Text('Nome Completo')),
+              ),
+              TextFormField(
+                controller: _emailController,
+                decoration: InputDecoration(label: Text('E-mail')),
+              ),
+              TextFormField(
+                controller: _passwordController,
+                decoration: InputDecoration(label: Text('PassWord')),
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    cadastrar();
+                  },
+                  child: Text('Cadastrar'))
+            ],
           ),
-          TextFormField(
-            controller: _emailController,
-            decoration: InputDecoration(label: Text('E-mail')),
-          ),
-          TextFormField(
-            controller: _passwordController,
-            decoration: InputDecoration(label: Text('PassWord')),
-          ),
-          ElevatedButton(
-              onPressed: () {
-                cadastrar();
-              },
-              child: Text('Cadastrar'))
         ],
       ),
     );
